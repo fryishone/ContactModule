@@ -1,0 +1,7 @@
+name = Contact
+description = This module provides basic access to contact schema and its data tables. 
+core = 7.x
+package = Custom Contact
+
+dependencies[] = entity
+dependencies[] = views

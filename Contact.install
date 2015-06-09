@@ -1,0 +1,466 @@
+<?php
+/* @file Schema.install contains the Schema definitions for database.
+ * @author smithm
+ */
+
+/**
+ * Implements hook_schema()
+ */
+function Contact_schema(){
+	db_set_active('contact');
+	$schema=array();
+
+	$schema['contact']=array(
+		'description'=>'a contact',
+		'database key'=>'contact',
+		'fields'=>array(
+	  		'contactid'=>array(
+		  		'description'=>'a contacts identification number',
+	  			'type'=>'serial',
+	  			'size'=>'big',
+	  			'not null'=>'TRUE',
+			),
+			'firstname'=>array(
+				'description'=>'contacts firstname',
+	  			'type'=>'varchar',
+	  			'length'=>50,
+			),
+			'prefername'=>array(
+				'description'=>'contacts preferred name',
+	  			'type'=>'varchar',
+	  			'length'=>50,
+			),
+			'middlename'=>array(
+				'description'=>'a contacts middlename',
+	  			'type'=>'varchar',
+	  			'length'=>50,
+			),
+			'lastname'=>array(
+				'description'=>'a contacts lastname',
+	  			'type'=>'varchar',
+	  			'length'=>50,
+			),
+			'uid'=>array(
+				'description'=>'Drupal User ID',
+				'type' => 'int',
+				'size' => 'big',
+			),
+			'uname'=>array(
+				'description'=>'Drupal Name and IDM UID',
+	  			'type'=>'varchar',
+	  			'length'=>60,
+			),				
+			'modifiedBy' => array(
+				'description' => 'Username of person modifying this record.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => 'TRUE',
+			),
+			'modifiedOn' => array(
+				'description' => 'Date this record was last modified',
+				'type' => 'varchar',
+				'mysql_type' => 'datetime',
+				'not null' => 'TRUE'
+			),
+			'createdBy' => array(
+				'description' => 'Username of person who created this record.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => 'TRUE'
+			),
+			'createdOn' => array(
+				'description' => 'Date this record was created',
+				'type' => 'varchar',
+				'mysql_type' => 'datetime',
+				'not null' => 'TRUE'
+			)
+    	),
+		'primary key'=>array('contactid'),
+	);
+
+	$schema['contactemail']=array(
+			'description'=>'a contact',
+			'database key'=>'contact',
+			'fields'=>array(
+				'contactemailid'=>array(
+			  		'description'=>'a contacts identification number',
+		  			'type'=>'serial',
+		  			'size'=>'big',
+		  			'not null'=>'TRUE',
+					),
+				'contactid'=>array(
+							'description'=>'contacts firstname',
+		  					'type' => 'int',
+    						'size' => 'big',
+							'not null'=>'TRUE',
+					),
+				'email'=>array(
+							'description'=>'contacts preferred name',
+		  			'type'=>'varchar',
+		  			'length'=>100,
+						'not null'=>'TRUE',
+					),
+				'preferred'=>array(
+							'description'=>'a contacts middlename',
+		  			'type'=>'varchar',
+		  			'length'=>1,
+						'not null'=>'TRUE',
+					'default'=>'N',
+					),
+				'emailtype'=>array(
+							'description'=>'a contacts lastname',
+		  			'type'=>'varchar',
+		  			'length'=>20,
+						'not null'=>'TRUE',
+					),
+				
+				'modifiedBy' => array(
+							'description' => 'Username of person modifying this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE',
+					),
+				'modifiedOn' => array(
+							'description' => 'Date this record was last modified',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					),
+				'createdBy' => array(
+							'description' => 'Username of person who created this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE'
+					),
+				'createdOn' => array(
+							'description' => 'Date this record was created',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					)
+			),
+			'primary key'=>array('contactemailid'),
+	);
+	
+	
+	$schema['emailtype'] = array(
+			'description' => 'list of programs employers may participate in',
+			'database key' => 'contact',
+			'fields' => array(
+					'emailtype' => array(
+							'description' => 'name of the participation program',
+							'type' => 'varchar',
+							'length' => 20,
+							'not null' => 'TRUE'
+					),
+					'description' => array(
+							'description' => 'description of the participation program',
+							'type' => 'varchar',
+							'length' => 500,
+							'default'=>NULL,
+					),
+					'active' => array(
+							'description' => 'boolean, is this participation progam active',
+							'type' => 'varchar',
+							'length' => 1,
+							'not null' => 'TRUE',
+							'default' => 'N'
+					)
+			), //end fields
+			'primary key' => array(
+					'emailtype'
+			)
+	); //end Participation
+	
+	
+	
+	$schema['contactphone']=array(
+			'description'=>'a contact',
+			'database key'=>'contact',
+			'fields'=>array(
+					'contactphoneid'=>array(
+							'description'=>'a contacts identification number',
+							'type'=>'serial',
+							'size'=>'big',
+							'not null'=>'TRUE',
+					),
+					'contactid'=>array(
+							'description'=>'contacts firstname',
+							'type' => 'int',
+							'size' => 'big',
+							'not null'=>'TRUE',
+					),
+					'phone'=>array(
+							'description'=>'a contacts middlename',
+							'type' => 'int',
+							'size' => 'big',
+							'default'=>NULL,
+					),
+					'extension'=>array(
+							'description'=>'a contacts middlename',
+							'type' => 'int',
+							'size' => 'big',
+							'default'=>NULL,
+					),
+					'phonetype'=>array(
+							'description'=>'a contacts lastname',
+							'type'=>'varchar',
+							'length'=>20,
+							'not null'=>'TRUE',
+					),
+	
+					'preferred' => array(
+							'description' => 'Username of person modifying this record.',
+							'type' => 'varchar',
+							'length' => 1,
+							'not null' => 'TRUE',
+							'default'=>'Y',
+					),
+					'modifiedBy' => array(
+							'description' => 'Username of person who modified this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE'
+					),					
+					'modifiedOn' => array(
+							'description' => 'Date this record was last modified',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					),
+					'createdBy' => array(
+							'description' => 'Username of person who created this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE'
+					),
+					'createdOn' => array(
+							'description' => 'Date this record was created',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					)
+			),
+			'primary key'=>array('contactphoneid'),
+	);
+	
+	
+	$schema['contactaddress']=array(
+			'description'=>'a contact',
+			'database key'=>'contact',
+			'fields'=>array(
+					'contactaddressid'=>array(
+							'description'=>'a contacts identification number',
+							'type'=>'serial',
+							'size'=>'big',
+							'not null'=>'TRUE',
+					),
+					'contactid'=>array(
+							'description'=>'contacts firstname',
+							'type' => 'int',
+							'size' => 'big',
+							'not null'=>'TRUE',
+					),
+					'address'=>array(
+							'description'=>'a contacts middlename',
+							'type'=>'varchar',
+							'length'=>1000,
+							'default'=>NULL,
+					),
+					'city'=>array(
+							'description'=>'a contacts middlename',
+							'type'=>'varchar',
+							'length'=>10,
+							'default'=>NULL,
+					),
+					'province'=>array(
+							'description'=>'a contacts lastname',
+							'type'=>'varchar',
+							'length'=>50,
+							'default'=>NULL,
+					),
+					'country'=>array(
+							'description'=>'a contacts middlename',
+							'type'=>'varchar',
+							'length'=>50,
+							'default'=>NULL,
+					),
+					'postalcode'=>array(
+							'description'=>'a contacts lastname',
+							'type'=>'varchar',
+							'length'=>10,
+							'default'=>NULL,
+					),
+					'conaddtype'=>array(
+							'description'=>'a contacts lastname',
+							'type'=>'varchar',
+							'length'=>20,
+							'default'=>NULL,
+					),
+					'preferred' => array(
+							'description' => 'Username of person modifying this record.',
+							'type' => 'varchar',
+							'length' => 1,
+							'not null' => 'TRUE',
+							'default'=>'N',
+					),
+					'modifiedBy' => array(
+							'description' => 'Username of person who modified this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE'
+					),					
+					'modifiedOn' => array(
+							'description' => 'Date this record was last modified',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					),
+					'createdBy' => array(
+							'description' => 'Username of person who created this record.',
+							'type' => 'varchar',
+							'length' => 50,
+							'not null' => 'TRUE'
+					),
+					'createdOn' => array(
+							'description' => 'Date this record was created',
+							'type' => 'varchar',
+							'mysql_type' => 'datetime',
+							'not null' => 'TRUE'
+					)
+			),
+			'primary key'=>array('contactaddressid'),
+	);
+	
+	
+	$schema['phonetype'] = array(
+			'description' => 'list of programs employers may participate in',
+			'database key' => 'contact',
+			'fields' => array(
+					'phonetype' => array(
+							'description' => 'name of the participation program',
+							'type' => 'varchar',
+							'length' => 20,
+							'not null' => 'TRUE'
+					),
+					'description' => array(
+							'description' => 'description of the participation program',
+							'type' => 'varchar',
+							'length' => 45,
+							'default'=>NULL,
+					),
+					'active' => array(
+							'description' => 'boolean, is this participation progam active',
+							'type' => 'varchar',
+							'length' => 1,
+							'not null' => 'TRUE',
+							'default' => 'Y'
+					)
+			), //end fields
+			'primary key' => array(
+					'phonetype'
+			)
+	); //end Participation
+	
+	$schema['conaddtype'] = array(
+			'description' => 'list of programs employers may participate in',
+			'database key' => 'contact',
+			'fields' => array(
+					'conaddtype' => array(
+							'description' => 'name of the participation program',
+							'type' => 'varchar',
+							'length' => 20,
+							'not null' => 'TRUE'
+					),
+					'description' => array(
+							'description' => 'description of the participation program',
+							'type' => 'varchar',
+							'length' => 500,
+							'default'=>NULL,
+					),
+					'active' => array(
+							'description' => 'boolean, is this participation progam active',
+							'type' => 'varchar',
+							'length' => 1,
+							'not null' => 'TRUE',
+							'default' => 'Y'
+					)
+			), //end fields
+			'primary key' => array(
+					'conaddtype'
+			)
+	); //end Participation
+	
+db_set_active();
+return $schema;
+}
+
+function Contact_install(){
+
+	db_set_active('contact');
+
+	
+	// CONTACTEMAIL FKS
+	db_query('ALTER TABLE contactemail
+		ADD CONSTRAINT CONTACTEMAIL_EMAILTYPE_FK
+		FOREIGN KEY(EMAILTYPE) REFERENCES EMAILTYPE (EMAILTYPE)');
+	db_query('ALTER TABLE contactemail
+		ADD CONSTRAINT CONTACT_EMAIL_FK
+		FOREIGN KEY(CONTACTID) REFERENCES CONTACT (CONTACTID)');
+	
+	// CONTACTPHONE FKS
+	db_query('ALTER TABLE contactphone
+		ADD CONSTRAINT CONTACTOHONE_PHONETYPE_FK
+		FOREIGN KEY(PHONETYPE) REFERENCES PHONETYPE (PHONETYPE)');
+	db_query('ALTER TABLE contactphone
+		ADD CONSTRAINT CONTACTPHONE_CONTACTID_FK
+		FOREIGN KEY(CONTACTID) REFERENCES CONTACT (CONTACTID)');
+	
+	// CONTACTADDRESS FKS
+	db_query('ALTER TABLE contactaddress
+		ADD CONSTRAINT CONTACTADDRESS_CONTACTID_FK
+		FOREIGN KEY(CONTACTID) REFERENCES CONTACT (CONTACTID)');
+	db_query('ALTER TABLE contactaddress
+		ADD CONSTRAINT CONTACTADDRESS_CONADDTYPE_FK
+		FOREIGN KEY(CONADDTYPE) REFERENCES CONADDTYPE (CONADDTYPE)');
+		
+	db_set_active();
+
+	//add views
+	db_query('CREATE VIEW contact as SELECT * from contact.contact');
+	db_query('CREATE VIEW contactemail as SELECT * from contact.contactemail');
+	db_query('CREATE VIEW emailtype as SELECT * from contact.emailtype');
+	db_query('CREATE VIEW contactphone as SELECT * from contact.contactphone');
+	db_query('CREATE VIEW contactaddress as SELECT * from contact.contactaddress');
+	db_query('CREATE VIEW phonetype as SELECT * from contact.phonetype');
+	db_query('CREATE VIEW conaddtype as SELECT * from contact.conaddtype');
+
+}
+
+function Contact_uninstall(){
+
+	db_set_active('contact');
+	
+		db_query('ALTER TABLE contactemail DROP foreign key CONTACTEMAIL_EMAILTYPE_FK');
+		db_query('ALTER TABLE contactemail DROP foreign key CONTACT_EMAIL_FK');
+		db_query('ALTER TABLE contactphone DROP foreign key CONTACTOHONE_PHONETYPE_FK');
+		db_query('ALTER TABLE contactphone DROP foreign key CONTACTPHONE_CONTACTID_FK');
+		
+		db_query('ALTER TABLE contactaddress DROP foreign key CONTACTADDRESS_CONTACTID_FK');
+		db_query('ALTER TABLE contactaddress DROP foreign key CONTACTADDRESS_CONADDTYPE_FK');
+		
+	db_set_active();
+
+	db_query('DROP VIEW contact');
+	db_query('DROP VIEW contactemail');
+	db_query('DROP VIEW emailtype');
+	db_query('DROP VIEW contactphone');
+	db_query('DROP VIEW contactaddress');
+	db_query('DROP VIEW phonetype');
+	db_query('DROP VIEW conaddtype');
+
+
+
+
+}
+

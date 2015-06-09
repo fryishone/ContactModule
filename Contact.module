@@ -1,0 +1,913 @@
+<?php
+
+define('ADMIN_CONTENT_CONTACT_MANAGE_URI', 'admin/content/contactadmin/manage/');
+define('ADMIN_CONTENT_CONTACT_URI','admin/content/contactadmin');
+
+define('ADMIN_CONTENT_CONADDTYPE_MANAGE_URI', 'admin/content/contactadmin/conaddtype/manage/');
+define('ADMIN_CONTENT_CONADDTYPE_URI','admin/content/contactadmin/conaddtype');
+
+define('ADMIN_CONTENT_EMAILTYPE_MANAGE_URI', 'admin/content/contactadmin/emailtype/manage/');
+define('ADMIN_CONTENT_EMAILTYPE_URI','admin/content/contactadmin/emailtype');
+
+define('ADMIN_CONTENT_PHONETYPE_MANAGE_URI', 'admin/content/contactadmin/phonetype/manage/');
+define('ADMIN_CONTENT_PHONETYPE_URI','admin/content/contactadmin/phonetype');
+
+function Contact_entity_info(){
+
+	$info['contact'] = array(
+		'label' => t('contact'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'contact',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'contactid'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'ContactController',
+		'views controller class' => 'EntityDefaultViewsController',
+		'admin ui'=>array(
+	  		'path'=>ADMIN_CONTENT_CONTACT_URI,
+			'controller class' =>'ContactUIController',
+			'file'=>'includes/contact.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+	
+	$info['conaddtype'] = array(
+		'label' => t('address type'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'conaddtype',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'conaddtype'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'ContactAddressTypeController',
+		'views controller class' => 'EntityDefaultViewsController',
+		'admin ui'=>array(
+	  		'path'=> ADMIN_CONTENT_CONADDTYPE_URI,
+			'controller class' =>'ContactAddressTypeUIController',
+			'file'=>'includes/conaddtype.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+	
+	$info['emailtype'] = array(
+		'label' => t('email type'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'emailtype',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'emailtype'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'EmailTypeController',
+		'views controller class' => 'EntityDefaultViewsController',
+		'admin ui'=>array(
+	  		'path'=> ADMIN_CONTENT_EMAILTYPE_URI,
+			'controller class' =>'EmailTypeUIController',
+			'file'=>'includes/emailtype.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+	
+	$info['phonetype'] = array(
+		'label' => t('phone type'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'phonetype',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'phonetype'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'PhoneTypeController',
+		'views controller class' => 'EntityDefaultViewsController',
+		'admin ui'=>array(
+	  		'path'=> ADMIN_CONTENT_PHONETYPE_URI,
+			'controller class' =>'PhoneTypeUIController',
+			'file'=>'includes/phonetype.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+
+	$info['contactphone'] = array(
+		'label' => t('contact phone'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'contactphone',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'contactphoneid'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'ContactPhoneController',
+		'views controller class' => 'EntityDefaultViewsController',
+		 //don't need the admin page for now
+		'admin ui'=>array(
+	  		//'path'=> ADMIN_CONTENT_PHONETYPE_URI,
+			//'controller class' =>'PhoneTypeUIController',
+			'file'=>'includes/contactphone.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+	
+	$info['contactemail'] = array(
+		'label' => t('contact email'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'contactemail',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'contactemailid'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'ContactEmailController',
+		'views controller class' => 'EntityDefaultViewsController',
+		// don't need the admin page for now
+		'admin ui'=>array(
+	  	//	'path'=> ADMIN_CONTENT_PHONETYPE_URI,
+		//	'controller class' =>'PhoneTypeUIController',
+			'file'=>'includes/contactemail.admin.inc',
+		),
+		//'access callback'=>'contact_access_callback',
+	);
+	
+	$info['contactaddress'] = array(
+		'label' => t('contact address'),
+		'label callback' =>'contact_label_callback',
+		'base table' => 'contactaddress',
+		'fieldable'=>TRUE,
+		'entity keys' =>array('id'=>'contactaddressid'),
+		'load_hook'=>'Contact_load',
+		'static cache'=> TRUE,
+		'uri callback' =>'Contact_uri',
+		'module' =>'Contact',
+		'controller class'=>'ContactAddressController',
+		'views controller class' => 'EntityDefaultViewsController',
+		// don't need the admin page for now
+		'admin ui'=>array(
+	  	//	'path'=> ADMIN_CONTENT_PHONETYPE_URI,
+		//	'controller class' =>'PhoneTypeUIController',
+			'file'=>'includes/contactaddress.admin.inc',
+		),
+		'access callback'=>'contact_access_callback',
+	);
+	
+	return $info;
+}
+
+// ********************CLASSES ******************** //
+
+/**
+ * Contact Phone Controller
+ */
+class ContactPhoneController extends EntityAPIController{
+
+	public function create(array $values = array()) {
+
+		$values += array(
+				'contactphoneid' => '',
+				'contactid' => '',
+				'phone' => '',
+				'extension' => '',
+				'phonetype' => '',
+				'preferred' => 'N',
+				'modifiedBy' => '',
+				'modifiedOn' => '',
+				'createdBy' => '',
+				'createdOn' => '',					
+				);
+		return parent::create($values);
+	}
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+	
+		global $user;
+		
+		if ( (isset($entity->is_new)) AND ( $entity->is_new == TRUE) ) {
+			$entity->createdBy = $user->name;
+			$entity->createdOn = date( 'Y-m-d H:i:s' );
+		}
+		$entity->modifiedOn = date( 'Y-m-d H:i:s' );
+		$entity->modifiedBy = $user->name;
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+/**
+ * Contact Phone Controller
+ */
+class ContactEmailController extends EntityAPIController{
+	public function create(array $values = array()) {
+
+		$values += array(
+				'contactemailid' => '',
+				'contactid' => '',
+				'email' => '',
+				'preferred' => 'N',
+				'emailtype' => '',
+				'modifiedBy' => '',
+				'modifiedOn' => '',
+				'createdBy' => '',
+				'createdOn' => '',				
+				);
+		return parent::create($values);
+	}
+
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+	
+		global $user;
+		
+		if ( (isset($entity->is_new)) AND ( $entity->is_new == TRUE) ) {
+			$entity->createdBy = $user->name;
+			$entity->createdOn = date( 'Y-m-d H:i:s' );
+		}
+		$entity->modifiedOn = date( 'Y-m-d H:i:s' );
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+/**
+ * Contact Address Controller
+ */
+class ContactAddressController extends EntityAPIController{
+	public function create(array $values = array()) {
+
+		$values += array(
+				'contactaddressid' => '',
+				'contactid' => '',
+				'address' => '',
+				'city' => '',
+				'province' => '',
+				'country' => '',
+				'postalcode' => '',
+				'conaddtype' => '',
+				'preferred' => 'N',
+				'modifiedOn' => '',
+				'modifiedBy' => '',
+				'createdBy' => '',
+				'createdOn' => '',			
+				);
+		return parent::create($values);
+	}
+
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+	
+		global $user;
+		
+		if ( (isset($entity->is_new)) AND ( $entity->is_new == TRUE) ) {
+			$entity->createdBy = $user->name;
+			$entity->createdOn = date( 'Y-m-d H:i:s' );
+		}
+		$entity->modifiedOn = date( 'Y-m-d H:i:s' );
+		$entity->modifiedBy = $user->name;
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+class ContactController extends EntityAPIController{
+	public function create(array $values =array()){
+	
+		$values += array(
+				'contactid' => '',
+				'firstname' => '',
+				'prefername' => '',
+				'middlename' => '',
+				'lastname' => '',	
+				'uid' => '',
+				'modifiedOn' => '',
+				'modifiedBy' => '',
+				'createdOn' => '',
+				'createdBy' => '',
+				'uname' => ''
+				);
+		return parent::create($values);
+	}
+
+	public function save($entity ,DatabaseTransaction $transaction = NULL){
+
+		global $user;
+		
+		if ( (isset($entity->is_new)) AND ( $entity->is_new == TRUE) ) {
+			$entity->createdBy = $user->name;
+			$entity->createdOn = date( 'Y-m-d H:i:s' );
+		}
+		$entity->modifiedBy = $user->name;
+		$entity->modifiedOn = date( 'Y-m-d H:i:s' );
+        return parent::save( $entity, $transaction );
+	}
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+	
+
+    public function getContactByUname( $uname ) {
+		/* Field uname not recognized
+		$query = new EntityFieldQuery();
+		$query->entityCondition('entity_type', 'contact')
+			   ->fieldCondition('uname', 'value', $username, '=')
+			   ->execute();
+		if (isset($query['contact'])) {
+		  $contact_items_ids = array_keys($result['contact']);
+		  $result = entity_load('contact', $contact_items_ids);
+		}
+		*/	
+		
+		/* $conditions array deprecated
+		$result = entity_load('contact',array(),array('uname' => $username));
+		*/
+		$result = db_select('contact', 'c')
+			->fields('c')
+			->condition( 'uname', $uname, '=' )
+			->execute()
+			->fetch();
+
+        return $result;   
+    }	
+}
+
+class ContactUIController extends EntityDefaultUIController{
+
+	public function hook_menu(){
+		$items = parent::hook_menu();
+		$items[$this->path]['title'] = t('Contact Admin');
+		$items[$this->path]['description'] = t('Manage Contacts');
+		$items[$this->path]['access callback'] ='contact_access_callback';
+		$items[$this->path]['access arguments'] = array('access content');
+		$items[$this->path]['type'] = MENU_LOCAL_TASK;
+		return $items;
+	}
+
+	public function overviewForm($form, $form_state){
+		//drupal_set_message('are we here');
+		$form['pager'] = array('#theme'=>'pager');
+		$header = array(
+		  'uname'=>array('data'=>t('uname'),'field'=>'uname'),
+		  'firstname'=>array('data'=>t('firstname'),'field'=>'firstname'),
+		  'prefername' =>array('data'=>t('preferred name'),'field'=>'prefername'),
+		  'middlename' => array('data'=>t('middlename'),'field'=>'middlename'),
+		  'lastname' => array('data'=>t('lastname'),'field'=>'lastname'),
+		  'operations' =>array('data' =>t('Operations'), 'field'=>'Operations'),
+		);
+
+		$options =array();
+		
+        $query = new EntityFieldQuery();
+        $query->entityCondition( 'entity_type', 'contact' );
+        
+        if ( !empty( $search_term ) ) {
+            $query->propertyCondition( 'name', '%' . $search_term . '%', 'like' );
+        }
+        // Check for sort order and sort key.
+        if ( !empty( $_GET[ 'sort' ] ) && !empty( $_GET[ 'order' ] ) ) {
+            $sort  = strtoupper( $_GET[ 'sort' ] );
+            $order = strtolower( $_GET[ 'order' ] );
+            $order = str_replace( ' ', '_', $order );
+            if ( $order != 'operations' ) {
+                $query->propertyOrderBy( $order, $sort );
+            }
+        }
+        $query->pager( TOTAL_ITEMS_PER_PAGE );
+        
+        $result= $query->execute();
+		$result = !empty($result['contact']) ? $result['contact'] :array();
+		$results = !empty($result) ? entity_load_multiple_by_name('contact', array_keys( $result ), null, null) : array();
+		foreach($results as $row=>$contactRow) {
+			$options['contactID -' . $row] = array(
+			  'uname' 	=> l($contactRow->uname, 'contactAdmin/'. $contactRow->uname),
+			  'firstname' 	=> l($contactRow->firstname, 'contactAdmin/'. $contactRow->firstname),
+			  'prefername' => l($contactRow->prefername, 'contactAdmin/'. $contactRow->prefername),
+			  'middlename' 	=> l($contactRow->middlename, 'contactAdmin/'. $contactRow->middlename),
+			  'lastname' 	=> l($contactRow->lastname, 'contactAdmin/'. $contactRow->lastname),
+
+			  'operations' =>
+					l(t('View'),	'contactAdmin/' . $contactRow->contactid) . ' ' .
+					l(t('Edit'),	ADMIN_CONTENT_CONTACT_MANAGE_URI . $contactRow->contactid, array('query' => array('destination' => ADMIN_CONTENT_CONTACT_URI))) . ' ' .
+					l(t('Delete'),	ADMIN_CONTENT_CONTACT_MANAGE_URI . $contactRow->contactid . '/delete',
+									array('attributes' =>array('class' =>array('contact-delete-' . $contactRow->contactid),),
+									'query'=>array('destination' => ADMIN_CONTENT_CONTACT_URI))),
+					);
+		}
+		
+		$form['entities']= array(
+			'#type' =>'tableselect',
+			'#header' =>$header,
+			'#options' =>$options,
+			'#attributes' =>array('class' =>array('entity-sort-table')),
+			'#empty' => t('There are no contacts'),
+		);
+
+		return $form;
+	}
+
+	public function overviewSubmitForm($form, &$form_state){
+		$values - $form_state['input'];
+		$contactids = array();
+
+		if(!empty($values['entities'])){
+			foreach($values['entities'] as $index => $value){
+				if(!empty($value)){
+					$status[] = str_replace('status-', '', $value);
+				}
+			}
+		}
+
+		switch($values['operations']){
+		  case 'delete':
+		  	drupal_goto('admin/content/contactAdmin/bulk/delete/' .implode('|', $status));
+		  	break;
+		}
+	}
+
+}
+
+/**
+ * Contact Address Type Controller
+ */
+class ContactAddressTypeController extends EntityAPIController{
+	public function create(array $values = array()) {
+
+		$values = array(
+				'conaddtype' => '',
+				'description' => '',
+				'active' => 'Y',			
+				);
+		return parent::create($values);
+	}
+
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+
+/*
+ * Contact Address Type UI Controller
+ */
+class ContactAddressTypeUIController extends EntityDefaultUIController {
+
+	public function hook_menu(){
+		$items = parent::hook_menu();
+		$items[$this->path]['title'] = t('Address Type');
+		$items[$this->path]['description'] = t('Manage Address Type');
+		$items[$this->path]['access callback'] ='contact_access_callback';
+		$items[$this->path]['access arguments'] = array('access content');
+		$items[$this->path]['type'] = MENU_LOCAL_TASK;
+		return $items;
+	}
+
+	public function overviewForm($form, $form_state){
+		//drupal_set_message('are we here');
+		$form['pager'] = array('#theme'=>'pager');
+		$header = array(
+		  'conaddtype'=>array('data'=>t('conaddtype'),'field'=>'conaddtype'),
+		  'description' =>array('data'=>t('description'),'field'=>'description'),
+		  'active' => array('data'=>t('active'),'field'=>'active'),
+		  'operations' =>array('data' =>t('Operations'), 'field'=>'Operations'),
+		);
+
+		$options =array();
+        $query = new EntityFieldQuery();
+        $query->entityCondition( 'entity_type', 'conaddtype' );
+        
+        if ( !empty( $search_term ) ) {
+            $query->propertyCondition( 'conaddtype', '%' . $search_term . '%', 'like' );
+        }
+        // Check for sort order and sort key.
+        if ( !empty( $_GET[ 'sort' ] ) && !empty( $_GET[ 'order' ] ) ) {
+            $sort  = strtoupper( $_GET[ 'sort' ] );
+            $order = strtolower( $_GET[ 'order' ] );
+            $order = str_replace( ' ', '_', $order );
+            if ( $order != 'operations' ) {
+                $query->propertyOrderBy( $order, $sort );
+            }
+        }
+        
+        $query->pager( TOTAL_ITEMS_PER_PAGE );
+        
+        $result           = $query->execute();
+
+		$result = !empty($result['conaddtype']) ? $result['conaddtype'] :array();
+		$results = !empty($result) ? entity_load_multiple_by_name('conaddtype', array_keys( $result ), null, null) : array();
+		
+		foreach($results as $row=>$contactRow){
+			$options['contactID -' . $row] = array(
+			  'conaddtype' 	=> l($contactRow->conaddtype, 'conaddtypeAdmin/'. $contactRow->conaddtype),
+			  'description' => l($contactRow->description, 'conaddtypeAdmin/'. $contactRow->description),
+			  'active' 	=> l($contactRow->active, 'conaddtypeAdmin/'. $contactRow->active),
+			  'operations' =>
+					l(t('View'),	'contactAdmin/' . $contactRow->conaddtype) . ' ' .
+					l(t('Edit'),	ADMIN_CONTENT_CONADDTYPE_MANAGE_URI . $contactRow->conaddtype, array('query' => array('destination' => ADMIN_CONTENT_CONADDTYPE_URI))) . ' ' .
+					l(t('Delete'),	ADMIN_CONTENT_CONADDTYPE_MANAGE_URI . $contactRow->conaddtype . '/delete',
+									array('attributes' =>array('class' =>array('contact-delete-' . $contactRow->conaddtype),),
+									'query'=>array('destination' => ADMIN_CONTENT_CONADDTYPE_URI))),
+					);
+
+		}
+
+		$form['entities']= array(
+			'#type' =>'tableselect',
+			'#header' =>$header,
+			'#options' =>$options,
+			'#attributes' =>array('class' =>array('entity-sort-table')),
+			'#empty' => t('There are no contacts'),
+		);
+
+		return $form;
+	}
+
+	public function overviewSubmitForm($form, &$form_state){
+		$values - $form_state['input'];
+		$contactids = array();
+
+		if(!empty($values['entities'])){
+			foreach($values['entities'] as $index => $value){
+				if(!empty($value)){
+					$status[] = str_replace('status-', '', $value);
+				}
+			}
+		}
+
+		switch($values['operations']){
+		  case 'delete':
+		  	drupal_goto('admin/content/contactAdmin/bulk/delete/' .implode('|', $status));
+		  	break;
+		}
+	}
+
+}
+
+
+/**
+ * Contact Email Type Controller
+ */
+class EmailTypeController extends EntityAPIController{
+	public function create(array $values = array()) {
+
+		$values += array(
+				'emailtype' => '',
+				'description' => '',
+				'active' => 'Y',			
+				);
+		return parent::create($values);
+	}
+
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+	
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+
+/*
+ * Contact Email Type UI Controller
+ */
+class EmailTypeUIController extends EntityDefaultUIController {
+
+	public function hook_menu(){
+		$items = parent::hook_menu();
+		$items[$this->path]['title'] = t('Email Type');
+		$items[$this->path]['description'] = t('Manage Email Type');
+		$items[$this->path]['access callback'] ='contact_access_callback';
+		$items[$this->path]['access arguments'] = array('access content');
+		$items[$this->path]['type'] = MENU_LOCAL_TASK;
+		return $items;
+	}
+
+	public function overviewForm($form, $form_state){
+		//drupal_set_message('are we here');
+		$form['pager'] = array('#theme'=>'pager');
+		$header = array(
+		  'emailtype'=>array('data'=>t('emailtype'),'field'=>'emailtype'),
+		  'description' =>array('data'=>t('description'),'field'=>'description'),
+		  'active' => array('data'=>t('active'),'field'=>'active'),
+		  'operations' =>array('data' =>t('Operations'), 'field'=>'Operations'),
+		);
+
+		$options =array();
+        $query = new EntityFieldQuery();
+        $query->entityCondition( 'entity_type', 'emailtype' );
+        
+        if ( !empty( $search_term ) ) {
+            $query->propertyCondition( 'emailtype', '%' . $search_term . '%', 'like' );
+        }
+        // Check for sort order and sort key.
+        if ( !empty( $_GET[ 'sort' ] ) && !empty( $_GET[ 'order' ] ) ) {
+            $sort  = strtoupper( $_GET[ 'sort' ] );
+            $order = strtolower( $_GET[ 'order' ] );
+            $order = str_replace( ' ', '_', $order );
+            if ( $order != 'operations' ) {
+                $query->propertyOrderBy( $order, $sort );
+            }
+        }
+        
+        $query->pager( TOTAL_ITEMS_PER_PAGE );
+        
+        $result           = $query->execute();
+		$result = !empty($result['emailtype']) ? $result['emailtype'] :array();
+		$results = !empty($result) ? entity_load_multiple_by_name('emailtype', array_keys( $result ), null, null) : array();
+		
+		foreach($results as $row=>$contactRow){
+			$options['contactID -' . $row] = array(
+			  'emailtype' 	=> l($contactRow->emailtype, 'emailtypeadmin/'. $contactRow->emailtype),
+			  'description' => l($contactRow->description, 'emailtypeadmin/'. $contactRow->description),
+			  'active' 	=> l($contactRow->active, 'emailtypeAdmin/'. $contactRow->active),
+			  'operations' =>
+					l(t('View'),	'contactAdmin/' . $contactRow->emailtype) . ' ' .
+					l(t('Edit'),	ADMIN_CONTENT_EMAILTYPE_MANAGE_URI . $contactRow->emailtype, array('query' => array('destination' => ADMIN_CONTENT_EMAILTYPE_URI))) . ' ' .
+					l(t('Delete'),	ADMIN_CONTENT_EMAILTYPE_MANAGE_URI . $contactRow->emailtype . '/delete',
+									array('attributes' =>array('class' =>array('contact-delete-' . $contactRow->emailtype),),
+									'query'=>array('destination' => ADMIN_CONTENT_EMAILTYPE_URI))),
+					);
+
+		}
+
+		$form['entities']= array(
+			'#type' =>'tableselect',
+			'#header' =>$header,
+			'#options' =>$options,
+			'#attributes' =>array('class' =>array('entity-sort-table')),
+			'#empty' => t('There are no contacts'),
+		);
+
+		return $form;
+	}
+
+	public function overviewSubmitForm($form, &$form_state){
+		$values - $form_state['input'];
+		$contactids = array();
+
+		if(!empty($values['entities'])){
+			foreach($values['entities'] as $index => $value){
+				if(!empty($value)){
+					$status[] = str_replace('status-', '', $value);
+				}
+			}
+		}
+
+		switch($values['operations']){
+		  case 'delete':
+		  	drupal_goto('admin/content/contactAdmin/bulk/delete/' .implode('|', $status));
+		  	break;
+		}
+	}
+
+}
+
+/**
+ * Contact Phone Type Controller
+ */
+class PhoneTypeController extends EntityAPIController{
+	public function create(array $values = array()) {
+
+		$values += array(
+				'phonetype' => '',
+				'description' => '',
+				'active' => 'Y',			
+				);
+		return parent::create($values);
+	}
+
+    public function save( $entity, DatabaseTransaction $transaction = NULL ) {
+	
+        return parent::save( $entity, $transaction );
+    }
+
+	public function delete($ids, DatabaseTransaction $transaction = NULL){
+		parent::delete($ids, $transaction);
+	}
+}
+
+
+/*
+ * Contact Phone Type UI Controller
+ */
+class PhoneTypeUIController extends EntityDefaultUIController {
+
+	public function hook_menu(){
+		$items = parent::hook_menu();
+		$items[$this->path]['title'] = t('Phone Type');
+		$items[$this->path]['description'] = t('Manage Phone Type');
+		$items[$this->path]['access callback'] ='contact_access_callback';
+		$items[$this->path]['access arguments'] = array('access content');
+		$items[$this->path]['type'] = MENU_LOCAL_TASK;
+		return $items;
+	}
+
+	public function overviewForm($form, $form_state){
+		//drupal_set_message('are we here');
+		$form['pager'] = array('#theme'=>'pager');
+		$header = array(
+		  'phonetype'=>array('data'=>t('phonetype'),'field'=>'phonetype'),
+		  'description' =>array('data'=>t('description'),'field'=>'description'),
+		  'active' => array('data'=>t('active'),'field'=>'active'),
+		  'operations' =>array('data' =>t('Operations'), 'field'=>'Operations'),
+		);
+
+		$options =array();
+        $query = new EntityFieldQuery();
+        $query->entityCondition( 'entity_type', 'phonetype' );
+        
+        if ( !empty( $search_term ) ) {
+            $query->propertyCondition( 'phonetype', '%' . $search_term . '%', 'like' );
+        }
+        // Check for sort order and sort key.
+        if ( !empty( $_GET[ 'sort' ] ) && !empty( $_GET[ 'order' ] ) ) {
+            $sort  = strtoupper( $_GET[ 'sort' ] );
+            $order = strtolower( $_GET[ 'order' ] );
+            $order = str_replace( ' ', '_', $order );
+            if ( $order != 'operations' ) {
+                $query->propertyOrderBy( $order, $sort );
+            }
+        }
+        
+        $query->pager( TOTAL_ITEMS_PER_PAGE );
+        
+        $result           = $query->execute();
+		$result = !empty($result['phonetype']) ? $result['phonetype'] :array();
+		$results = !empty($result) ? entity_load_multiple_by_name('phonetype', array_keys( $result ), null, null) : array();
+		
+		foreach($results as $row=>$contactRow){
+			$options['contactID -' . $row] = array(
+			  'phonetype' 	=> l($contactRow->phonetype, 'phonetypeadmin/'. $contactRow->phonetype),
+			  'description' => l($contactRow->description, 'phonetypeadmin/'. $contactRow->description),
+			  'active' 	=> l($contactRow->active, 'phonetypeAdmin/'. $contactRow->active),
+			  'operations' =>
+					l(t('View'),	'contactAdmin/' . $contactRow->phonetype) . ' ' .
+					l(t('Edit'),	ADMIN_CONTENT_PHONETYPE_MANAGE_URI . $contactRow->phonetype, array('query' => array('destination' => ADMIN_CONTENT_PHONETYPE_URI))) . ' ' .
+					l(t('Delete'),	ADMIN_CONTENT_PHONETYPE_MANAGE_URI . $contactRow->phonetype . '/delete',
+									array('attributes' =>array('class' =>array('contact-delete-' . $contactRow->phonetype),),
+									'query'=>array('destination' => ADMIN_CONTENT_PHONETYPE_URI))),
+					);
+
+		}
+
+		$form['entities']= array(
+			'#type' =>'tableselect',
+			'#header' =>$header,
+			'#options' =>$options,
+			'#attributes' =>array('class' =>array('entity-sort-table')),
+			'#empty' => t('There are no contacts'),
+		);
+
+		return $form;
+	}
+
+	public function overviewSubmitForm($form, &$form_state){
+		$values - $form_state['input'];
+		$contactids = array();
+
+		if(!empty($values['entities'])){
+			foreach($values['entities'] as $index => $value){
+				if(!empty($value)){
+					$status[] = str_replace('status-', '', $value);
+				}
+			}
+		}
+
+		switch($values['operations']){
+		  case 'delete':
+		  	drupal_goto('admin/content/contactAdmin/bulk/delete/' .implode('|', $status));
+		  	break;
+		}
+	}
+
+}
+
+// ********** Function for URI*********** //
+function Contact_uri($contact){
+	return array('path' => 'contactAdmin/'.$contact->id,);
+}
+
+function contact_access_callback(){
+	return true;
+}
+
+// ********************LOAD FUNCTIONS******************** //
+
+function Contact_load($id = NULL, $reset= FALSE){
+
+	$ids= (isset($id)? array ($id):array());
+	$contact = Contact_load_multiple($ids,$reset);
+	return $contact? reset($contact) :FALSE;
+}
+
+function Contact_load_multiple($ids =array(), $conditions = array(), $reset = FALSE){
+
+	return entity_load('contact',$ids,$conditions,$reset);
+}
+
+
+// ********************MENU LOAD******************** //
+function Contact_menu(){
+	$items = array();
+	
+    $items[ 'ContactRegistration' ]                       = array(
+         'title' => 'Contact Registration Form',
+        'page callback' => 'ContactRegistration_page',
+        'access callback' => 'user_is_logged_in',
+        'file' => 'ContactRegistration.inc' 
+    );
+	$items['contactAdmin']=array(
+		'title'=>'Contact Admin',
+		'description'=>'Manage Contact',
+		'page callback'=> 'Contact_info',
+		'access arguments'=>array('access content'),
+	);
+
+	$items['admin/content/contactAdmin/%contact']= array(
+	 	'title' =>'Contact View',
+	  	'page callback' => 'contact_view_entity',
+	  	'access callback' =>'access_menu_callback',
+	  	'access arguments' => array('access content'),
+	);
+
+	$items['admin/content/contactAdmin/bulk/delete/%'] = array(
+	  	'title' =>'Bulk Delete Contact',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('contact_bulk_delete',5),
+		'access arguments' => array('access content'),
+		'file' => 'contact.admin.inc',
+	);
+
+
+	$items['admin/structure/contactAdmin'] = array(
+	  	'title' => 'Contact Fields',
+	  	'access arguments' => array('access content'),
+	 	'type' => MENU_NORMAL_ITEM,
+	);
+
+
+	return $items;
+
+}
+
+
+function Contact_permission(){
+	return array(
+	'administer contact'=>array(
+		'title' => t('Administer Contact'),
+		'restrict access'=> TRUE,
+		),
+	'view contact'=>array (
+		'title'=> t('view contact'),
+		)
+	);
+}
+
+
+/**
+ * Contact Registration
+ *
+ */
+/****** Function for Employer registraion form******/
+function ContactRegistration() {
+    
+    global $user;
+    return drupal_get_form('ContactRegistration_form');
+}
+
+// ********************CALLBACKS******************** //
+function Contact_info(){
+	return ('Welcome to the administration page for your contacts!');
+}
+
+function Contact_page_title($contact){
+	return $contact->id;
+}
+
+function Contact_page_view($contact,$viewmode='full'){
+$contact->content=array();
+// Build fields content.
+field_attach_prepare_view('contact', array($contact->id => $contact), $view_mode);
+entity_prepare_view('contact', array($contact->id => $contact));
+$contact->content += field_attach_view('contact', $contact, $view_mode);
+
+return $contact->content;
+
+}
